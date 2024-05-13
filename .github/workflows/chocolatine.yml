@@ -1,0 +1,70 @@
+name: plazza
+
+on: [push]
+
+env:
+  MIRROR_URL: "git@github.com:EpitechPromo2027/B-CCP-400-PAR-4-1-theplazza-matthieu.godme.git"
+  EXECUTABLES: "plazza"
+
+jobs:
+  check_coding_style:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/epitech/coding-style-checker:latest
+    steps:
+      - name: check_out_repository
+        uses: actions/checkout@v4
+      - name: check_coding-style
+        run: check.sh $(pwd) $(pwd)
+      - name: parsing
+        run: |
+          if [ -s "coding-style-reports.log" ]; then
+          string="coding style error"
+          while read -r line
+          do
+          major=$(echo $line | cut -d ':' -f 3)
+          lines=$(echo $line | cut -d ':' -f 2)
+          files=$(echo $line | cut -d ' ' -f 1 | cut -d ':' -f 1)
+          code=$(echo $line | cut -d ':' -f 4)
+          big_title="$major $string"
+          echo -e "::error title=$big_title,file=${files:2},line=$lines::$code"
+          done < coding-style-reports.log
+          exit 84
+          else
+          exit 0
+          fi
+
+  check_program_compilation:
+    needs: check_coding_style
+    runs-on: ubuntu-latest
+    container:
+      image:  epitechcontent/epitest-docker
+    steps:
+    - name: check_out_repository
+      uses: actions/checkout@v4
+    - name: compile
+      run: make
+      timeout-minutes: 2
+    - name: clean
+      run: make clean
+    - name: check_compilation
+      run: |
+        for executable in ${{ env.EXECUTABLES }}; do
+        if ! [ -x $executable ]; then
+          exit 84
+        fi
+        done
+
+  push_to_mirror:
+    needs: check_program_compilation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            ${{ env.MIRROR_URL }}
+          ssh_private_key:
+            ${{ secrets.GIT_SSH_PRIVATE_KEY }}
