@@ -2,13 +2,12 @@
 ** EPITECH PROJECT, 2024
 ** Plazza
 ** File description:
-** main
+** Reception
 */
 
-#include "define.hpp"
 #include "Reception.hpp"
 
-int main(void)
+void Plazza::Reception::loop()
 {
-    return SUCCESS;
+    return;
 }
