@@ -14,16 +14,16 @@ namespace Plazza {
     class Reception {
         public:
             Reception(double cookingTimeMult, int cookPerKitchen, std::size_t replacementCD):
-                _cookingTimeMult(cookingTimeMult),
-                _cookPerKitchen(cookPerKitchen),
-                _ingredientReplacementCD(replacementCD) {}
+                m_cookingTimeMult(cookingTimeMult),
+                m_cookPerKitchen(cookPerKitchen),
+                m_ingredientReplacementCD(replacementCD) {}
             ~Reception() = default;
 
             void loop();
 
         private:
-            double _cookingTimeMult;
-            int _cookPerKitchen;
-            std::size_t _ingredientReplacementCD;
+            double m_cookingTimeMult;
+            int m_cookPerKitchen;
+            std::size_t m_ingredientReplacementCD;
     };
 }
