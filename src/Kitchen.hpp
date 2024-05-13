@@ -17,6 +17,8 @@ namespace Plazza {
             ~Kitchen() = default;
         private:
             std::map<Ingredients, int> m_ingredients;
-            std::size_t m_pid;
+            std::size_t m_pid; // change to process class
+            // clock class
+            // cook vector
     };
 }
