@@ -14,17 +14,17 @@ int getArgs(char **av)
 
     std::string current = av[1];
     double cookingTimeMult = std::stod(current, &idx);
-    if (idx != current.size())
+    if (idx != current.size() || cookingTimeMult <= 0)
         return FAILURE;
 
     current = av[2];
     int cookPerKitchen = std::stoi(current, &idx);
-    if (idx != current.size())
+    if (idx != current.size() || cookPerKitchen <= 0)
         return FAILURE;
 
     current = av[3];
     std::size_t replacementCD = std::stol(current, &idx);
-    if (idx != current.size())
+    if (idx != current.size() || replacementCD <= 0)
         return FAILURE;
 
     Plazza::Reception reception(cookingTimeMult, cookPerKitchen, replacementCD);
