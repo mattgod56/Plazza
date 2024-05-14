@@ -7,7 +7,6 @@
 
 #include "define.hpp"
 #include "Reception.hpp"
-#include <iostream>
 
 int getArgs(char **av)
 {
