@@ -9,6 +9,8 @@ CC =	g++
 
 SRC =	$(addsuffix .cpp, 		\
 			$(addprefix src/,	\
+					Cook		\
+					Kitchen		\
 					main		\
 				)				\
 			)					\

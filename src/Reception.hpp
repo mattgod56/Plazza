@@ -7,8 +7,9 @@
 
 #pragma once
 
-#include <string>
-#include "IPizza.hpp"
+#include <vector>
+
+#include "Pizza.hpp"
 #include "Kitchen.hpp"
 
 namespace Plazza {
@@ -24,10 +25,11 @@ namespace Plazza {
             void loop();
 
         private:
+            void createKitchen(void);
             double m_cookingTimeMult;
             int m_cookPerKitchen;
             std::size_t m_ingredientReplacementCD;
-            std::vector<Kitchen> m_kitchens;
-            std::vector<IPizza> m_commands;
+            std::vector<Plazza::Kitchen> m_kitchens;
+            std::vector<Plazza::Pizza> m_commands;
     };
 }
