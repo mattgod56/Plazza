@@ -6,8 +6,10 @@
 */
 
 #include "Process.hpp"
+#include <cerrno>
+#include <cstring>
 #include <unistd.h>
-#include <stdlib.h>
+#include <iostream>
 
 int Plazza::Process::getPid(void)
 {
@@ -17,6 +19,9 @@ int Plazza::Process::getPid(void)
 void Plazza::Process::startProcess(void)
 {
     m_pid = fork();
+    if (m_pid == -1) {
+        std::cerr << strerror(errno) << std::endl;
+    }
 }
 
 void Plazza::Process::stopProcess(void)
