@@ -12,6 +12,7 @@ SRC =	$(addsuffix .cpp, 		\
 					Cook		\
 					Kitchen		\
 					main		\
+					Reception	\
 				)				\
 			)					\
 

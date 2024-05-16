@@ -22,7 +22,9 @@ namespace Plazza {
                 m_ingredientReplacementCD(replacementCD) {}
             ~Reception() = default;
 
-            void loop();
+            void getCommands();
+            void checkCommand(std::string str);
+            void createKitchen();
 
         private:
             void createKitchen(void);

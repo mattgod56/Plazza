@@ -28,6 +28,7 @@ int getArgs(char **av)
         return FAILURE;
 
     Plazza::Reception reception(cookingTimeMult, cookPerKitchen, replacementCD);
+    reception.getCommands();
     return SUCCESS;
 }
 
