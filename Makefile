@@ -10,6 +10,7 @@ CC =	g++
 SRC =	$(addsuffix .cpp, 		\
 			$(addprefix src/,	\
 					main		\
+					Reception	\
 				)				\
 			)					\
 
