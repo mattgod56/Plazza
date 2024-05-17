@@ -6,6 +6,7 @@
 */
 
 #include "Reception.hpp"
+#include "Pizza.hpp"
 #include <iostream>
 #include <sstream>
 
@@ -26,14 +27,25 @@ void Plazza::Reception::pizzaFound(std::istringstream &iss, Pizza &pizza)
     std::string size;
     if (!getline(iss, size, ' '))
         return;
-    std::cout << typeToString.at(pizza.m_type) << " " << size << std::endl;
+    std::string strAmount;
+    if (!getline(iss, strAmount, ' '))
+        return;
+    if (!(strAmount.at(0) == 'x'))
+        return;
+    strAmount.erase(0, 1);
+    std::size_t idx = 0;
+    int amount = std::stoi(strAmount, &idx);
+    if (idx != strAmount.size() || !(amount > 0))
+        return;
+    for (int i = 0; i < amount; i++) {
+        std::cout << "One " << size << " " << typeToString.at(pizza.m_type) << " please !" << std::endl;
+    }
 }
 
 void Plazza::Reception::checkCommand(std::string command)
 {
     while (command[0] == ' ')
         command.erase(0, 1);
-    std::cout << "line: " << command << std::endl;
     std::istringstream iss(command);
     std::string name;
     if (!getline(iss, name, ' '))
