@@ -49,12 +49,27 @@ namespace Plazza
         {PizzaType::Fantasia, "fantasia"}
     };
 
+    const std::map<std::string, PizzaType> stringToType = {
+        {"regina", PizzaType::Regina},
+        {"margarita", PizzaType::Margarita},
+        {"americana", PizzaType::Americana},
+        {"fantasia", PizzaType::Fantasia}
+    };
+
     const std::map<PizzaSize, std::string> sizeToString = {
         {PizzaSize::S, "S"},
         {PizzaSize::M, "M"},
         {PizzaSize::L, "L"},
         {PizzaSize::XL, "XL"},
         {PizzaSize::XXL, "XXL"}
+    };
+
+    const std::map<std::string, PizzaSize> stringToSize = {
+        {"S", PizzaSize::S},
+        {"M", PizzaSize::M},
+        {"L", PizzaSize::L},
+        {"XL", PizzaSize::XL},
+        {"XXL", PizzaSize::XXL}
     };
 
     const std::map<PizzaIngredients, std::string> ingredientToString = {
@@ -67,6 +82,18 @@ namespace Plazza
         {PizzaIngredients::Mushroom, "mushroom"},
         {PizzaIngredients::Steak, "steak"},
         {PizzaIngredients::Tomato, "tomato"}
+    };
+
+    const std::map<std::string, PizzaIngredients> stringToIngredient = {
+        {"dough", PizzaIngredients::Dough},
+        {"eggplant", PizzaIngredients::Eggplant},
+        {"goat cheese", PizzaIngredients::GoatCheese},
+        {"gruyere", PizzaIngredients::Gruyere},
+        {"chief love", PizzaIngredients::ChiefLove},
+        {"ham", PizzaIngredients::Ham},
+        {"mushroom", PizzaIngredients::Mushroom},
+        {"steak", PizzaIngredients::Steak},
+        {"tomato", PizzaIngredients::Tomato}
     };
 
     struct Pizza {
