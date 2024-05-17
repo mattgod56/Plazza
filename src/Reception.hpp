@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <sstream>
 #include <vector>
 
 #include "Pizza.hpp"
@@ -24,7 +25,7 @@ namespace Plazza {
 
             void getCommands();
             void checkCommand(std::string str);
-            void createKitchen();
+            void pizzaFound(std::istringstream &iss, Pizza &pizza);
 
         private:
             void createKitchen(void);
