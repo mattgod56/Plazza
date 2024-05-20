@@ -5,6 +5,7 @@
 ** main
 */
 
+#include "MessageQueue.hpp"
 #include "define.hpp"
 #include "Reception.hpp"
 
@@ -35,6 +36,5 @@ int main(int ac, char **av)
 {
     if (ac != 4)
         return FAILURE;
-
     return getArgs(av);
 }
