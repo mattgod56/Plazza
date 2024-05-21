@@ -6,7 +6,6 @@
 */
 
 #pragma once
-#include <cstddef>
 #include <map>
 #include <string>
 
@@ -31,15 +30,16 @@ namespace Plazza
 
     enum PizzaIngredients
     {
-        Dough = 1,
-        Tomato = 2,
-        Gruyere = 4,
-        Ham = 8,
-        Mushroom = 16,
-        Steak = 32,
-        Eggplant = 64,
-        GoatCheese = 128,
-        ChiefLove = 256
+        Dough,
+        Tomato,
+        Gruyere,
+        Ham,
+        Mushroom,
+        Steak,
+        Eggplant,
+        GoatCheese,
+        ChiefLove,
+        NONE
     };
 
     const std::map<PizzaType, std::string> typeToString = {
@@ -97,6 +97,7 @@ namespace Plazza
     };
 
     struct Pizza {
+        Pizza() = default;
         Pizza(
             std::map<PizzaIngredients, int> ingredients,
             PizzaType type,

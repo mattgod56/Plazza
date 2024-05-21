@@ -12,21 +12,28 @@
 #include <string>
 
 #include "Pizza.hpp"
+#include "Process.hpp"
+#include "MessageQueue.hpp"
+#include "define.hpp"
 
 namespace Plazza {
     class Kitchen {
         public:
-            Kitchen(std::map<std::string, int> &map) : m_ingredients(map) {}
+            Kitchen(std::map<Plazza::PizzaIngredients, int> &map, std::string name) : m_ingredients(map), m_queue(name, QUEUE_SIZE, QUEUE_MSG_SIZE)
+            {
+                waitForCommand();
+            }
             ~Kitchen() = default;
 
+            void waitForCommand(void);
             void assignCommand(Pizza &);
             void ingredientsRefill(void);
+            Plazza::MessageQueue &getQueue(void){return m_queue;}
         private:
             void checkAlive(void);
-            std::map<std::string, int> &m_ingredients;
+            std::map<Plazza::PizzaIngredients, int> &m_ingredients;
             std::mutex m_mutex;
-            std::size_t m_pid; // change to process class
-            // clock class
-            // cook vector
+            Plazza::Process m_process;
+            Plazza::MessageQueue m_queue;
     };
 }

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <sstream>
+#include <memory>
 #include <vector>
 
 #include "Pizza.hpp"
@@ -26,13 +26,13 @@ namespace Plazza {
             void getCommands();
             void checkCommand(std::string str);
             void pizzaFound(std::istringstream &iss, Pizza &pizza);
-
+            void communicateToKitchen(Plazza::Pizza &);
         private:
-            void createKitchen(void);
+            void createKitchen(Plazza::Pizza &pizza);
             double m_cookingTimeMult;
             int m_cookPerKitchen;
             std::size_t m_ingredientReplacementCD;
-            std::vector<Plazza::Kitchen> m_kitchens;
+            std::vector<std::unique_ptr<Plazza::Kitchen>> m_kitchens;
             std::vector<Plazza::Pizza> m_commands;
     };
 }
