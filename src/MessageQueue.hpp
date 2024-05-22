@@ -47,6 +47,18 @@ namespace Plazza
                 }
                 return res;
             }
+
+            template<typename D>
+            void operator<<(D &data)
+            {
+                sendMessage(data, sizeof(data));
+            }
+
+            template<typename D>
+            void operator>>(D &data)
+            {
+                data = receiveMessage<D>();
+            }
         private:
             std::string m_name;
             int m_msgsize;

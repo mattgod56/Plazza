@@ -5,9 +5,8 @@
 ** main
 */
 
-#include "Pizza.hpp"
 #include "Reception.hpp"
-#include <exception>
+#include "define.hpp"
 
 int getArgs(char **av)
 {
@@ -38,5 +37,4 @@ int main(int ac, char **av)
     if (ac != 4)
         return FAILURE;
     return getArgs(av);
-
 }

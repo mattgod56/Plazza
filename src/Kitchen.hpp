@@ -21,7 +21,10 @@ namespace Plazza {
         public:
             Kitchen(std::map<Plazza::PizzaIngredients, int> &map, std::string name) : m_ingredients(map), m_queue(name, QUEUE_SIZE, QUEUE_MSG_SIZE)
             {
-                waitForCommand();
+                m_process.startProcess();
+
+                if (m_process.getPid() == 0)
+                    waitForCommand();
             }
             ~Kitchen() = default;
 
