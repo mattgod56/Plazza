@@ -11,8 +11,8 @@ SRC =	$(addsuffix .cpp, 		\
 			$(addprefix src/,	\
 					Process		\
 					MessageQueue\
-					Cook		\
 					Kitchen		\
+					Cook		\
 					main		\
 					Reception	\
 				)				\
