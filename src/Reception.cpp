@@ -6,9 +6,13 @@
 */
 
 #include "Reception.hpp"
+#include "Kitchen.hpp"
 #include "Pizza.hpp"
 #include <iostream>
+#include <map>
+#include <memory>
 #include <sstream>
+#include <string>
 
 void Plazza::Reception::getCommands()
 {
@@ -38,6 +42,7 @@ void Plazza::Reception::pizzaFound(std::istringstream &iss, Pizza &pizza)
     if (idx != strAmount.size() || !(amount > 0))
         return;
     for (int i = 0; i < amount; i++) {
+        communicateToKitchen(pizza);
         std::cout << "One " << size << " " << typeToString.at(pizza.m_type) << " please !" << std::endl;
     }
 }
@@ -56,7 +61,22 @@ void Plazza::Reception::checkCommand(std::string command)
     }
 }
 
-void Plazza::Reception::createKitchen()
+void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
 {
+    for (int i = 0; i < m_kitchens.size(); i++) {
+        Plazza::MessageQueue &queue = m_kitchens.at(i)->getQueue();
+        queue.sendMessage(pizza, sizeof(pizza));
+        std::string res = queue.receiveMessage<std::string>();
+        return;
+    }
+    createKitchen(pizza);
+}
 
+void Plazza::Reception::createKitchen(Plazza::Pizza &pizza)
+{
+    m_kitchens.push_back(
+        std::make_unique<Plazza::Kitchen>(
+        m_cookPerKitchen, m_cookingTimeMult, m_ingredientReplacementCD, QUEUE_NAME + std::to_string(m_kitchens.size())));
+    // m_kitchens.back()->assignCommand(pizza);
+    // send command
 }

@@ -6,7 +6,6 @@
 */
 
 #pragma once
-#include <cstddef>
 #include <map>
 #include <string>
 
@@ -40,7 +39,7 @@ namespace Plazza
         Eggplant,
         GoatCheese,
         ChiefLove,
-        End
+        NONE
     };
 
     const std::map<PizzaType, std::string> typeToString = {
@@ -98,6 +97,7 @@ namespace Plazza
     };
 
     struct Pizza {
+        Pizza() = default;
         Pizza(
             std::map<PizzaIngredients, int> ingredients,
             PizzaType type,

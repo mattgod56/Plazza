@@ -6,9 +6,6 @@
 */
 
 #include "MessageQueue.hpp"
-#include <cstring>
-#include <mqueue.h>
-#include <iostream>
 
 Plazza::MessageQueue::MessageQueue(std::string name, int max, int msgmax) : m_name(name), m_msgsize(msgmax)
 {
@@ -22,26 +19,6 @@ Plazza::MessageQueue::MessageQueue(std::string name, int max, int msgmax) : m_na
         std::cout << strerror(errno) << std::endl;
         return;
     }
-}
-
-void Plazza::MessageQueue::sendMessage(std::string &buffer)
-{
-    if (mq_send(m_queue, buffer.c_str(), buffer.length() + 1, 0) == -1) {
-        std::cout << strerror(errno) << std::endl;
-    }
-}
-
-std::string Plazza::MessageQueue::receiveMessage(void)
-{
-    char buffer[m_msgsize + 1];
-    std::string res;
-
-    if (m_queue != (mqd_t)-1) {
-        if (mq_receive(m_queue, buffer, m_msgsize, NULL) == -1)
-            std::cout << strerror(errno) << std::endl;
-        res = buffer;
-    }
-    return res;
 }
 
 Plazza::MessageQueue::~MessageQueue()
