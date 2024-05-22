@@ -17,7 +17,7 @@ void Plazza::Reception::getCommands()
 
     while (std::getline(std::cin, line)) {
         std::istringstream iss(line);
-        while (getline(iss, command, ';'))
+        while (std::getline(iss, command, ';'))
             checkCommand(command);
     }
 }
