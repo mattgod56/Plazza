@@ -74,12 +74,9 @@ void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
 
 void Plazza::Reception::createKitchen(Plazza::Pizza &pizza)
 {
-    std::map<Plazza::PizzaIngredients, int>ingredients;
-
-    for (int i = Plazza::Dough; i < Plazza::NONE; i++)
-        ingredients[(static_cast<Plazza::PizzaIngredients>(i))] = 5;
     m_kitchens.push_back(
         std::make_unique<Plazza::Kitchen>(
-        ingredients, QUEUE_NAME + std::to_string(m_kitchens.size())));
-    m_kitchens.back()->assignCommand(pizza);
+        m_cookPerKitchen, m_cookingTimeMult, m_ingredientReplacementCD, QUEUE_NAME + std::to_string(m_kitchens.size())));
+    // m_kitchens.back()->assignCommand(pizza);
+    // send command
 }

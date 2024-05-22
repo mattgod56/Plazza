@@ -18,7 +18,7 @@ Plazza::Kitchen::Kitchen(std::size_t nbrCook, double cookingMult, std::size_t re
         m_cooks.push_back(Cook(m_mutex, m_condIng, m_ingredients, m_commands, m_cookingTimeMult));
         m_threads.push_back(std::thread(&Cook::takeCommand, m_cooks.back()));
     }
-    for (int i = PizzaIngredients::Dough; i != PizzaIngredients::End; i++)
+    for (int i = PizzaIngredients::Dough; i != PizzaIngredients::NONE; i++)
         m_ingredients[static_cast<PizzaIngredients>(i)] = 5;
     m_process.startProcess();
 

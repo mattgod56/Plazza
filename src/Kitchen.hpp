@@ -25,11 +25,10 @@
 namespace Plazza {
     class Kitchen {
         public:
-            Kitchen(std::size_t nbrCook, double cookingMult, std::size_t refillCD)
+            Kitchen(std::size_t nbrCook, double cookingMult, std::size_t refillCD, std::string name);
             ~Kitchen() = default;
 
             void waitForCommand(void);
-            void assignCommand(Pizza &);
             void ingredientsRefill(void);
             void dailyKitchenLife();
             Plazza::MessageQueue &getQueue(void){return m_queue;}
@@ -46,6 +45,6 @@ namespace Plazza {
             std::condition_variable m_condIng;
             double m_cookingTimeMult;
             std::size_t m_nbrCook;
-            std::size_t m_refillCD;     
+            std::size_t m_refillCD;
     };
 }
