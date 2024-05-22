@@ -10,8 +10,8 @@ CC =	g++
 SRC =	$(addsuffix .cpp, 		\
 			$(addprefix src/,	\
 					MessageQueue\
-					Cook		\
 					Kitchen		\
+					Cook		\
 					main		\
 					Reception	\
 				)				\

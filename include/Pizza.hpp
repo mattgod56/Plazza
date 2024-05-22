@@ -31,15 +31,16 @@ namespace Plazza
 
     enum PizzaIngredients
     {
-        Dough = 1,
-        Tomato = 2,
-        Gruyere = 4,
-        Ham = 8,
-        Mushroom = 16,
-        Steak = 32,
-        Eggplant = 64,
-        GoatCheese = 128,
-        ChiefLove = 256
+        Dough,
+        Tomato,
+        Gruyere,
+        Ham,
+        Mushroom,
+        Steak,
+        Eggplant,
+        GoatCheese,
+        ChiefLove,
+        End
     };
 
     const std::map<PizzaType, std::string> typeToString = {
