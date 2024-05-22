@@ -45,7 +45,6 @@ void Plazza::Kitchen::dailyKitchenLife(void)
             m_condIng.notify_all();
             ingredientClock = std::clock();
         }
-        // std::cout << std::clock() - start << std::endl;
     }
     std::cout << "MY KITCHEN NOOOOOOOOOOOO" << std::endl; // should stop this process
 }
