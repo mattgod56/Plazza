@@ -7,57 +7,37 @@
 
 #pragma once
 
-#include <cstring>
-#include <sys/types.h>
+#include "queue.hpp"
+#include <array>
 #include <mqueue.h>
-#include <iostream>
 #include <string>
 
 namespace Plazza
 {
     class MessageQueue {
         public:
+            struct Datapack {
+                int replycode;
+                int data[QUEUE_DATA_SIZE];
+            };
             MessageQueue(std::string name, int max, int msgmax);
             ~MessageQueue();
 
-            template<typename T>
-            void sendMessage(T &buffer, std::size_t length)
-            {
-                char buff[length + 1];
-                memcpy(&buff, &buffer, length);
+            void sendMessage(int code, std::array<int, QUEUE_DATA_SIZE> &data);
 
-                if (mq_send(m_queue, buff, length, 0) == -1) {
-                    std::cout << strerror(errno) << std::endl;
-                }
+            MessageQueue::Datapack receiveMessage(void);
+
+            void operator<<(MessageQueue::Datapack &data)
+            {
+                std::array<int, QUEUE_DATA_SIZE> arr;
+                for (int i = 0; i < QUEUE_DATA_SIZE; i++)
+                    arr[i] = data.data[i];
+                sendMessage(data.replycode, arr);
             }
 
-            template<typename D>
-            D receiveMessage(void)
+            void operator>>(MessageQueue::Datapack &data)
             {
-                char buffer[m_msgsize + 1];
-                D res;
-
-                if (m_queue != (mqd_t)-1) {
-                    ssize_t bytes =  mq_receive(m_queue, buffer, m_msgsize, NULL);
-                    if (bytes == -1) {
-                        std::cout << strerror(errno) << std::endl;
-                        throw;
-                    }
-                    memcpy(&res, buffer, bytes);
-                }
-                return res;
-            }
-
-            template<typename D>
-            void operator<<(D &data)
-            {
-                sendMessage(data, sizeof(data));
-            }
-
-            template<typename D>
-            void operator>>(D &data)
-            {
-                data = receiveMessage<D>();
+                data = receiveMessage();
             }
         private:
             std::string m_name;

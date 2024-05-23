@@ -26,10 +26,10 @@ namespace Plazza
             void cookPizza(Pizza &pizza);
             bool areIngredientsMet(Pizza &pizza);
         private:
-            std::map<PizzaIngredients, int> &m_ingredients;
-            SafeQueue &m_commands;
             std::mutex &m_mutex;
             std::condition_variable &m_condIng;
+            std::map<PizzaIngredients, int> &m_ingredients;
+            SafeQueue &m_commands;
             double &m_mult;
     };
 }

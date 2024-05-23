@@ -7,6 +7,7 @@
 
 #include "Cook.hpp"
 #include "Pizza.hpp"
+#include <iostream>
 #include <ctime>
 #include <mutex>
 
@@ -36,6 +37,7 @@ void Plazza::Cook::cookPizza(Pizza &pizza)
         while (clock() - start < pizza.m_cookingTime * m_mult * 1000);
         cooked = true;
     }
+    std::cout << "i cooked the " <<  typeToString.at(pizza.m_type)  << std::endl;
 }
 
 void Plazza::Cook::takeCommand()

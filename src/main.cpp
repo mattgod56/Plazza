@@ -5,11 +5,9 @@
 ** main
 */
 
-#include "Kitchen.hpp"
-#include "MessageQueue.hpp"
-#include "define.hpp"
 #include "Reception.hpp"
 #include "define.hpp"
+
 #include <string>
 
 int getArgs(char **av)
@@ -32,8 +30,6 @@ int getArgs(char **av)
         return FAILURE;
 
     Plazza::Reception reception(cookingTimeMult, cookPerKitchen, replacementCD);
-    Plazza::Kitchen kitchen(cookPerKitchen, cookingTimeMult, replacementCD, QUEUE_NAME + std::to_string(1)); //TEMPORARY THIS SHOULDN'T BE HERE
-    kitchen.dailyKitchenLife(); //TEMPORARY THIS SHOULDN'T BE HERE
     reception.getCommands();
     return SUCCESS;
 }
