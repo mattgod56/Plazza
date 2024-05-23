@@ -22,7 +22,7 @@ OBJ	=	$(SRC:.cpp=.o)
 
 CPPFLAGS	=	-iquote./include
 
-CFLAGS	=	-Wall -Wextra
+CXXFLAGS	=	-Wall -Wextra
 
 NAME	=	plazza
 
@@ -33,7 +33,7 @@ all	:	$(NAME)
 $(NAME)	:	$(OBJ)
 	$(CC) -o $(NAME) $(OBJ)
 
-vg	: CFLAGS += -g3
+vg	: CXXFLAGS += -g3
 vg	: $(NAME)
 
 clean	:

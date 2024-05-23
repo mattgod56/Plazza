@@ -6,13 +6,10 @@
 */
 
 #include "Reception.hpp"
-#include "Kitchen.hpp"
-#include "Pizza.hpp"
+
+#include <array>
 #include <iostream>
-#include <map>
-#include <memory>
 #include <sstream>
-#include <string>
 
 void Plazza::Reception::getCommands()
 {
@@ -63,20 +60,49 @@ void Plazza::Reception::checkCommand(std::string command)
 
 void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
 {
-    for (int i = 0; i < m_kitchens.size(); i++) {
+    std::vector<int> vec;
+    int min = 0;
+    int idx = 0;
+
+    for (std::size_t i = 0; i < m_kitchens.size(); i++) {
         Plazza::MessageQueue &queue = m_kitchens.at(i)->getQueue();
-        queue.sendMessage(pizza, sizeof(pizza));
-        std::string res = queue.receiveMessage<std::string>();
-        return;
+        std::array<int, QUEUE_DATA_SIZE> arr = {0};
+        queue.sendMessage(Plazza::QUEUE_MESSAGES::INFO, arr);
+        Plazza::MessageQueue::Datapack data;
+        queue >> data;
+        vec.push_back(data.data[0]);
     }
-    createKitchen(pizza);
+    if (m_kitchens.size() > 0) {
+        min = vec[0];
+        for (std::size_t i = 0; i < vec.size(); i++) {
+            if (vec[i] < min) {
+                min = vec[i];
+                idx = i;
+            }
+        }
+    }
+    if (min >= m_cookPerKitchen * 2 || m_kitchens.size() == 0)
+        return createKitchen(pizza);
+    Plazza::MessageQueue::Datapack data;
+    data.replycode = Plazza::QUEUE_MESSAGES::PIZZA;
+    data.data[0] = idx;
+    m_kitchens.at(idx)->getQueue() << data;
 }
 
 void Plazza::Reception::createKitchen(Plazza::Pizza &pizza)
 {
+    std::cout << "creating new Kitchen" << std::endl;
     m_kitchens.push_back(
         std::make_unique<Plazza::Kitchen>(
         m_cookPerKitchen, m_cookingTimeMult, m_ingredientReplacementCD, QUEUE_NAME + std::to_string(m_kitchens.size())));
-    // m_kitchens.back()->assignCommand(pizza);
-    // send command
+    int idx = 0;
+    for (int i = 1; i < 8; i *=2) {
+        if (static_cast<Plazza::PizzaType>(i) == pizza.m_type)
+            break;
+        idx++;
+    }
+    Plazza::MessageQueue::Datapack data;
+    data.replycode = Plazza::QUEUE_MESSAGES::PIZZA;
+    data.data[0] = idx;
+    m_kitchens.back()->getQueue() << data;
 }

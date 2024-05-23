@@ -10,7 +10,6 @@
 #include <memory>
 #include <vector>
 
-#include "Pizza.hpp"
 #include "Kitchen.hpp"
 
 namespace Plazza {
