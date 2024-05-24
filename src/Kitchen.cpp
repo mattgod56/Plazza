@@ -69,7 +69,6 @@ void Plazza::Kitchen::dailyKitchenLife(void)
     auto start = std::clock();
     auto ingredientClock = std::clock();
     while (std::clock() - start <= TIME_TO_CLOSE) {
-        std::cout << "im here" << std::endl;
         if (receiveCommand()) {
             start = std::clock();
         }
@@ -83,5 +82,4 @@ void Plazza::Kitchen::dailyKitchenLife(void)
     std::array<int, QUEUE_DATA_SIZE>arr = {0};
     m_deathqueue.sendMessage(Plazza::QUEUE_MESSAGES::DEAD, arr);
     m_process.stopProcess();
-    std::cout << "im not supposed to be here" << std::endl;
 }
