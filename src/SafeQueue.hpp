@@ -30,6 +30,12 @@ class SafeQueue {
             return true;
         }
 
+        int length()
+        {
+            std::unique_lock<std::mutex> lk(m_mut);
+            return m_vect.size();
+        }
+
     private:
         std::vector<Plazza::Pizza> m_vect;
         std::mutex m_mut;
