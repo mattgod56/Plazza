@@ -42,7 +42,7 @@ bool Plazza::Kitchen::receiveCommand(void)
 {
     try {
         Plazza::MessageQueue::Datapack res;
-        std::cout << "trying to get data" << std::endl;
+        // std::cout << "tryying to get data" << std::endl;
         m_queue >> res;
         if (res.replycode == Plazza::QUEUE_MESSAGES::INFO) {
             Plazza::MessageQueue::Datapack send;
@@ -66,17 +66,24 @@ bool Plazza::Kitchen::receiveCommand(void)
 
 void Plazza::Kitchen::dailyKitchenLife(void)
 {
-    auto start = std::clock();
-    auto ingredientClock = std::clock();
-    while (std::clock() - start <= TIME_TO_CLOSE) {
+    auto start = std::chrono::system_clock::now();
+    auto ingredientClock = std::chrono::system_clock::now();
+    auto duration = std::chrono::system_clock::now() - start;
+    auto durationIngredient = std::chrono::system_clock::now() - ingredientClock;
+    while (std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() <= TIME_TO_CLOSE) {
+        dprintf(1, "Time: %ld\n", std::chrono::duration_cast<std::chrono::milliseconds>(duration).count());
         if (receiveCommand()) {
-            start = std::clock();
+            dprintf(1, "oh\n");
+            start = std::chrono::system_clock::now();
         }
-        if (std::clock() - ingredientClock > static_cast<long int>(m_refillCD * 1000)) {
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(durationIngredient).count()
+            > static_cast<long int>(m_refillCD)) {
             ingredientsRefill();
             m_condIng.notify_all();
-            ingredientClock = std::clock();
+            ingredientClock = std::chrono::system_clock::now();
         }
+        duration = std::chrono::system_clock::now() - start;
+        durationIngredient = std::chrono::system_clock::now() - ingredientClock;
     }
     std::cout << "removing kitchen" << std::endl;
     std::array<int, QUEUE_DATA_SIZE>arr = {0};

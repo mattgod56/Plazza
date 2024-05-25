@@ -7,8 +7,8 @@
 
 #include "Cook.hpp"
 #include "Pizza.hpp"
+#include <chrono>
 #include <iostream>
-#include <ctime>
 #include <mutex>
 
 bool Plazza::Cook::areIngredientsMet(Pizza &pizza)
@@ -25,16 +25,18 @@ bool Plazza::Cook::areIngredientsMet(Pizza &pizza)
 void Plazza::Cook::cookPizza(Pizza &pizza)
 {
     bool cooked = false;
-    std::clock_t start;
     std::unique_lock<std::mutex> lk(m_mutex);
+    std::cout << "entering" << std::endl;
 
     while (!cooked) {
         if (!areIngredientsMet(pizza)) {
             m_condIng.wait(lk);
             continue;
         }
-        start = clock();
-        while (clock() - start < pizza.m_cookingTime * m_mult * 1000);
+        // std::chrono::time_point<std::chrono::system_clock> start;
+        auto start = std::chrono::system_clock::now();
+        while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count()
+            < pizza.m_cookingTime * m_mult * 1000);
         cooked = true;
     }
     std::cout << "i cooked the " <<  typeToString.at(pizza.m_type)  << std::endl;

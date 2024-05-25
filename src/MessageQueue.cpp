@@ -50,7 +50,9 @@ Plazza::MessageQueue::Datapack Plazza::MessageQueue::receiveMessage(void)
     Plazza::MessageQueue::Datapack res;
 
     if (m_queue != (mqd_t)-1) {
+        dprintf(1,"I'm just behind you\n");
         ssize_t bytes =  mq_receive(m_queue, (char *)&res, m_msgsize, NULL);
+        dprintf(1,"got data\n");
         if (bytes == -1 || bytes == 0) {
             std::cerr << "receive: " << strerror(errno) << std::endl;
             throw Plazza::MessageQueueError();
