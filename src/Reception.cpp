@@ -6,10 +6,10 @@
 */
 
 #include "Reception.hpp"
+#include "Kitchen.hpp"
 #include "MessageQueue.hpp"
 #include "queue.hpp"
 
-#include <array>
 #include <chrono>
 #include <exception>
 #include <iostream>
@@ -21,7 +21,6 @@ void Plazza::Reception::getCommands()
 {
     std::string line;
     std::string command;
-    std::vector<std::thread>vec;
     std::thread thrd(&Reception::deleteKitchen, this);
 
     while (std::getline(std::cin, line)) {
