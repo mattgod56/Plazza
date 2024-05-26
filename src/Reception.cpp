@@ -6,6 +6,7 @@
 */
 
 #include "Reception.hpp"
+#include "Exception.hpp"
 #include "Kitchen.hpp"
 #include "MessageQueue.hpp"
 #include "Pizza.hpp"
@@ -83,9 +84,7 @@ void Plazza::Reception::statusCmd(void)
             while (static_cast<Plazza::QUEUE_MESSAGES>(data.replycode) != Plazza::QUEUE_MESSAGES::STATUS_RES) {
                 try {
                     m_kitchens.at(i)->getSndQueue() >> data;
-                } catch (std::exception &) {
-
-                }
+                } catch (Plazza::MessageQueueError &) {}
             }
             std::cout << std::endl << "Kitchen[" << i << "]:" << std::endl;
             for (int i = 0; i <= INGREDIENTS_NBR; i++) {
@@ -93,7 +92,7 @@ void Plazza::Reception::statusCmd(void)
             }
             std::cout << std::endl;
         }
-    } catch (std::exception &e) {
+    } catch (Plazza::MessageQueueError &e) {
         return;
     }
 }
@@ -111,18 +110,15 @@ void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
         data.replycode = Plazza::QUEUE_MESSAGES::INFO;
         try {
             m_kitchens.at(i)->getQueue() << data;
-        }catch (std::exception &e) {
+        }catch (Plazza::MessageQueueError &e) {
             std::cerr << e.what() << std::endl;
         }
         Plazza::MessageQueue::Datapack resdata;
         resdata.replycode = -1;
-        std::this_thread::sleep_for(std::chrono::milliseconds(700));
         while (static_cast<Plazza::QUEUE_MESSAGES>(resdata.replycode) != Plazza::QUEUE_MESSAGES::INFO_RES) {
             try {
                 m_kitchens.at(i)->getSndQueue() >> resdata;
-            } catch (std::exception &) {
-
-            }
+            } catch (Plazza::MessageQueueError &) {}
         }
         vec.push_back(resdata.data[0]);
     }
@@ -179,7 +175,7 @@ void Plazza::Reception::deleteKitchen(void)
                 data.replycode = 0;
                 try {
                     i->get()->getDeathQueue() >> data;
-                } catch (std::exception &e) {}
+                } catch (Plazza::MessageQueueError &e) {}
                 if (data.replycode == Plazza::QUEUE_MESSAGES::DEAD) {
                     std::cout << "deleting kitchen" << std::endl;
                     m_kitchens.erase(i);
