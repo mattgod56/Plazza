@@ -7,6 +7,7 @@
 
 #include "Kitchen.hpp"
 #include "Exception.hpp"
+#include "MessageQueue.hpp"
 #include "define.hpp"
 #include "queue.hpp"
 
@@ -17,7 +18,8 @@ Plazza::Kitchen::Kitchen(
     double cookingMult,
     std::size_t refillCD,
     std::string name) : m_nbrCook(nbrCook), m_cookingTimeMult(cookingMult), m_refillCD(refillCD),
-        m_queue(name, QUEUE_SIZE, QUEUE_MSG_SIZE), m_deathqueue(name + "death", QUEUE_SIZE, QUEUE_MSG_SIZE)
+        m_queue(name, QUEUE_SIZE, QUEUE_MSG_SIZE), m_deathqueue(name + "death", QUEUE_SIZE, QUEUE_MSG_SIZE),
+        m_sndqueue(name + "res", QUEUE_SIZE, QUEUE_MSG_SIZE)
 {
     for (int i = PizzaIngredients::Dough; i != PizzaIngredients::NONE; i++)
         m_ingredients[static_cast<PizzaIngredients>(i)] = 5;
@@ -46,7 +48,7 @@ bool Plazza::Kitchen::receiveCommand(void)
             Plazza::MessageQueue::Datapack send;
             send.replycode = Plazza::QUEUE_MESSAGES::INFO_RES;
             send.data[0] = m_commands.length() + m_occupiedCooks;
-            m_queue << send;
+            m_sndqueue << send;
             return false;
         }
 

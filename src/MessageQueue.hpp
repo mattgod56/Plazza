@@ -39,9 +39,10 @@ namespace Plazza
             {
                 data = receiveMessage();
             }
-            std::string m_name;
-            int m_msgsize;
-            mqd_t m_queue;
-            struct mq_attr m_attr;
+            private:
+                std::string m_name;
+                int m_msgsize;
+                mqd_t m_queue;
+                struct mq_attr m_attr;
     };
 }
