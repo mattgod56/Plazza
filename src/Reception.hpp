@@ -19,7 +19,8 @@ namespace Plazza {
             Reception(double cookingTimeMult, int cookPerKitchen, std::size_t replacementCD):
                 m_cookingTimeMult(cookingTimeMult),
                 m_cookPerKitchen(cookPerKitchen),
-                m_ingredientReplacementCD(replacementCD) {}
+                m_ingredientReplacementCD(replacementCD),
+                m_ctr(0) {}
             ~Reception() = default;
 
             void getCommands();
@@ -33,6 +34,7 @@ namespace Plazza {
             double m_cookingTimeMult;
             int m_cookPerKitchen;
             std::size_t m_ingredientReplacementCD;
+            int m_ctr;
             std::vector<std::unique_ptr<Plazza::Kitchen>> m_kitchens;
             std::vector<Plazza::Pizza> m_commands;
     };
