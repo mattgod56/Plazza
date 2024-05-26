@@ -117,7 +117,6 @@ void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
         }
         Plazza::MessageQueue::Datapack resdata;
         resdata.replycode = -1;
-        std::this_thread::sleep_for(std::chrono::milliseconds(700));
         while (static_cast<Plazza::QUEUE_MESSAGES>(resdata.replycode) != Plazza::QUEUE_MESSAGES::INFO_RES) {
             try {
                 m_kitchens.at(i)->getSndQueue() >> resdata;
