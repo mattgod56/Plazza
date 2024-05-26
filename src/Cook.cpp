@@ -33,7 +33,6 @@ void Plazza::Cook::cookPizza(Pizza &pizza)
             m_condIng.wait(lk);
             continue;
         }
-        // std::chrono::time_point<std::chrono::system_clock> start;
         auto start = std::chrono::system_clock::now();
         while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count()
             < pizza.m_cookingTime * m_mult * 1000);
@@ -44,6 +43,7 @@ void Plazza::Cook::cookPizza(Pizza &pizza)
 
 void Plazza::Cook::takeCommand()
 {
+    dprintf(1, "enter cook\n");
     Plazza::Pizza pizza = menu[0];
     while (1) {
         if (m_commands.tryPop(pizza) != 0)
