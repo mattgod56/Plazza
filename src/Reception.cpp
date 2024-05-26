@@ -6,8 +6,10 @@
 */
 
 #include "Reception.hpp"
+#include "queue.hpp"
 
 #include <array>
+#include <exception>
 #include <iostream>
 #include <sstream>
 
@@ -69,7 +71,14 @@ void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
         std::array<int, QUEUE_DATA_SIZE> arr = {0};
         queue.sendMessage(Plazza::QUEUE_MESSAGES::INFO, arr);
         Plazza::MessageQueue::Datapack data;
-        queue >> data;
+        data.replycode = 0;
+        while (data.replycode != Plazza::QUEUE_MESSAGES::INFO_RES) {
+            try {
+                queue >> data;
+            } catch (std::exception &) {
+
+            }
+        }
         vec.push_back(data.data[0]);
     }
     if (m_kitchens.size() > 0) {
@@ -85,7 +94,14 @@ void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
         return createKitchen(pizza);
     Plazza::MessageQueue::Datapack data;
     data.replycode = Plazza::QUEUE_MESSAGES::PIZZA;
-    data.data[0] = idx;
+    int pizidx = 0;
+    for (int i = 1; i < 8; i *=2) {
+        if (static_cast<Plazza::PizzaType>(i) == pizza.m_type)
+            break;
+        pizidx++;
+    }
+    data.data[0] = pizidx;
+    dprintf(1, "SEND PIZZA %d\n", idx);
     m_kitchens.at(idx)->getQueue() << data;
 }
 

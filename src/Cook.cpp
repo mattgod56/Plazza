@@ -39,6 +39,7 @@ void Plazza::Cook::cookPizza(Pizza &pizza)
         cooked = true;
     }
     std::cout << "i cooked the " <<  typeToString.at(pizza.m_type)  << std::endl;
+    m_occupiedCook -= 1;
 }
 
 void Plazza::Cook::takeCommand()
@@ -46,7 +47,9 @@ void Plazza::Cook::takeCommand()
     dprintf(1, "enter cook\n");
     Plazza::Pizza pizza = menu[0];
     while (1) {
-        if (m_commands.tryPop(pizza) != 0)
+        if (m_commands.tryPop(pizza) != 0) {
+            m_occupiedCook += 1;
             cookPizza(pizza);
+        }
     }
 }
