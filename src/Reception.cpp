@@ -48,7 +48,6 @@ void Plazza::Reception::pizzaFound(std::istringstream &iss, Pizza &pizza)
     int amount = std::stoi(strAmount, &idx);
     if (idx != strAmount.size() || !(amount > 0))
         return;
-    std::cout << amount << std::endl;
     for (int i = 0; i < amount; i++) {
         communicateToKitchen(pizza);
         std::cout << "One " << size << " " << typeToString.at(pizza.m_type) << " please !" << std::endl;
@@ -156,7 +155,8 @@ void Plazza::Reception::createKitchen(Plazza::Pizza &pizza)
     std::cout << "creating new Kitchen" << std::endl;
     m_kitchens.push_back(
         std::make_unique<Plazza::Kitchen>(
-        m_cookPerKitchen, m_cookingTimeMult, m_ingredientReplacementCD, QUEUE_NAME + std::to_string(m_kitchens.size())));
+        m_cookPerKitchen, m_cookingTimeMult, m_ingredientReplacementCD, QUEUE_NAME + std::to_string(m_ctr)));
+    m_ctr++;
     int idx = 0;
     for (int i = 1; i < 8; i *=2) {
         if (static_cast<Plazza::PizzaType>(i) == pizza.m_type)
@@ -173,17 +173,18 @@ void Plazza::Reception::createKitchen(Plazza::Pizza &pizza)
 void Plazza::Reception::deleteKitchen(void)
 {
     while (true) {
-        for (auto i = m_kitchens.begin(); i != m_kitchens.end(); i++) {
-            Plazza::MessageQueue::Datapack data;
-            try {
-                i->get()->getDeathQueue() >> data;
-            } catch (std::exception &e) {
-
-            }
-            if (data.replycode == Plazza::QUEUE_MESSAGES::DEAD) {
-                std::cout << "deleting kitchen" << std::endl;
-                m_kitchens.erase(i);
-                break;
+        if (m_kitchens.size() > 0) {
+            for (auto i = m_kitchens.begin(); i != m_kitchens.end(); i++) {
+                Plazza::MessageQueue::Datapack data;
+                data.replycode = 0;
+                try {
+                    i->get()->getDeathQueue() >> data;
+                } catch (std::exception &e) {}
+                if (data.replycode == Plazza::QUEUE_MESSAGES::DEAD) {
+                    std::cout << "deleting kitchen" << std::endl;
+                    m_kitchens.erase(i);
+                    break;
+                }
             }
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(300));

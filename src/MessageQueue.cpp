@@ -7,6 +7,7 @@
 
 #include "MessageQueue.hpp"
 #include "Exception.hpp"
+#include "queue.hpp"
 
 #include <iostream>
 #include <cstring>
@@ -27,6 +28,11 @@ Plazza::MessageQueue::MessageQueue(std::string name, int max, int msgmax) : m_na
 
 Plazza::MessageQueue::~MessageQueue()
 {
+    for (int i = 0; i < QUEUE_MSG_SIZE; i++) {
+        try {
+            receiveMessage();
+        } catch (Plazza::MessageQueueError &e) {}
+    }
     if (m_queue != (mqd_t)-1) {
         mq_close(m_queue);
         mq_unlink(m_name.c_str());
