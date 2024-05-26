@@ -23,7 +23,7 @@ Plazza::Kitchen::Kitchen(
         m_ingredients[static_cast<PizzaIngredients>(i)] = 5;
     m_process.startProcess();
     for (int i = 0; m_process.getPid() == 0 && i < (int)nbrCook; i++) {
-        m_cooks.push_back(Cook(m_mutex, m_condIng, m_ingredients, m_commands, m_cookingTimeMult));
+        m_cooks.push_back(Cook(m_mutex, m_condIng, m_ingredients, m_commands, m_cookingTimeMult, m_occupiedCooks));
         m_threads.push_back(std::thread(&Cook::takeCommand, m_cooks.back()));
     }
     if (m_process.getPid() == 0)
@@ -32,6 +32,7 @@ Plazza::Kitchen::Kitchen(
 
 void Plazza::Kitchen::ingredientsRefill(void)
 {
+    dprintf(1, "tactical refill\n");
     for (int i = PizzaIngredients::Dough; i != PizzaIngredients::NONE; i++) {
         m_ingredients[static_cast<PizzaIngredients>(i)] += 1;
     }
@@ -75,7 +76,7 @@ void Plazza::Kitchen::dailyKitchenLife(void)
     auto durationIngredient = std::chrono::system_clock::now() - ingredientClock;
     while (std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() <= TIME_TO_CLOSE) {
         // dprintf(1, "Time: %ld\n", std::chrono::duration_cast<std::chrono::milliseconds>(duration).count());
-        if (receiveCommand()) {
+        if (receiveCommand() || m_occupiedCooks > 0 || m_commands.length() > 0) {
             // dprintf(1, "received command\n");
             start = std::chrono::system_clock::now();
         }
@@ -87,6 +88,7 @@ void Plazza::Kitchen::dailyKitchenLife(void)
         }
         duration = std::chrono::system_clock::now() - start;
         durationIngredient = std::chrono::system_clock::now() - ingredientClock;
+        // dprintf(1, "TIME %ld %d %d\n",duration.count(), m_commands.length(), m_occupiedCooks);
     }
     dprintf(1, "removing kitchen\n");
     std::array<int, QUEUE_DATA_SIZE>arr;

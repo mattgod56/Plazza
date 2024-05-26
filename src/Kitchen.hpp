@@ -41,5 +41,6 @@ namespace Plazza {
             std::vector<std::thread> m_threads;
             std::condition_variable m_condPizza;
             std::condition_variable m_condIng;
+            int m_occupiedCooks;
     };
 }

@@ -71,14 +71,21 @@ void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
     for (std::size_t i = 0; i < m_kitchens.size(); i++) {
         Plazza::MessageQueue &queue = m_kitchens.at(i)->getQueue();
         std::array<int, QUEUE_DATA_SIZE> arr = {0};
+        Plazza::MessageQueue::Datapack data;
         try {
             queue.sendMessage(Plazza::QUEUE_MESSAGES::INFO, arr);
-            Plazza::MessageQueue::Datapack data;
-            queue >> data;
-            vec.push_back(data.data[0]);
         }catch (std::exception &e) {
 
         }
+        data.replycode = 0;
+        while (data.replycode != Plazza::QUEUE_MESSAGES::INFO_RES) {
+            try {
+                queue >> data;
+            } catch (std::exception &) {
+
+            }
+        }
+        vec.push_back(data.data[0]);
     }
     if (m_kitchens.size() > 0) {
         min = vec[0];
@@ -92,14 +99,15 @@ void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
     if (min >= m_cookPerKitchen * 2 || m_kitchens.size() == 0)
         return createKitchen(pizza);
     Plazza::MessageQueue::Datapack data;
+    data.replycode = Plazza::QUEUE_MESSAGES::PIZZA;
     int pizidx = 0;
     for (int i = 1; i < 8; i *=2) {
         if (static_cast<Plazza::PizzaType>(i) == pizza.m_type)
             break;
         pizidx++;
     }
-    data.replycode = Plazza::QUEUE_MESSAGES::PIZZA;
     data.data[0] = pizidx;
+    dprintf(1, "SEND PIZZA %d\n", idx);
     m_kitchens.at(idx)->getQueue() << data;
 }
 
