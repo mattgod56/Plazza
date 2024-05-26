@@ -91,7 +91,7 @@ void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
 
 void Plazza::Reception::createKitchen(Plazza::Pizza &pizza)
 {
-    std::cout << "creating new Kitchen" << std::endl;
+    //  << "creating new Kitchen" << std::endl;
     m_kitchens.push_back(
         std::make_unique<Plazza::Kitchen>(
         m_cookPerKitchen, m_cookingTimeMult, m_ingredientReplacementCD, QUEUE_NAME + std::to_string(m_kitchens.size())));

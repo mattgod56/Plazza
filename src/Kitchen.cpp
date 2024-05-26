@@ -26,7 +26,6 @@ Plazza::Kitchen::Kitchen(
         m_cooks.push_back(Cook(m_mutex, m_condIng, m_ingredients, m_commands, m_cookingTimeMult, m_occupiedCooks));
         m_threads.push_back(std::thread(&Cook::takeCommand, m_cooks.back()));
     }
-
     if (m_process.getPid() == 0)
         dailyKitchenLife();
 }
@@ -42,8 +41,10 @@ bool Plazza::Kitchen::receiveCommand(void)
 {
     try {
         Plazza::MessageQueue::Datapack res;
-        std::cout << "trying to get data" << std::endl;
+        // std::cout << "tryying to get data" << std::endl;
+        // dprintf(1, "trying to read\n");
         m_queue >> res;
+        dprintf(1, "command read\n");
         if (res.replycode == Plazza::QUEUE_MESSAGES::INFO) {
             Plazza::MessageQueue::Datapack send;
             send.replycode = Plazza::QUEUE_MESSAGES::INFO_RES;
@@ -53,33 +54,43 @@ bool Plazza::Kitchen::receiveCommand(void)
         }
 
         if (res.replycode == Plazza::QUEUE_MESSAGES::PIZZA) {
+            dprintf(1, "command info recognized\n");
             Plazza::Pizza pizza = menu[res.data[0]];
             m_commands.push(pizza);
             return true;
         }
         return false;
     } catch (Plazza::MessageQueueError &e) {
-        std::cerr << e.what() << std::endl;
+        // std::cerr << e.what() << std::endl;
+
         return false;
     }
 }
 
 void Plazza::Kitchen::dailyKitchenLife(void)
 {
-    auto start = std::clock();
-    auto ingredientClock = std::clock();
-    while (std::clock() - start <= TIME_TO_CLOSE) {
+    auto start = std::chrono::system_clock::now();
+    auto ingredientClock = std::chrono::system_clock::now();
+    auto duration = std::chrono::system_clock::now() - start;
+    auto durationIngredient = std::chrono::system_clock::now() - ingredientClock;
+    while (std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() <= TIME_TO_CLOSE) {
+        // dprintf(1, "Time: %ld\n", std::chrono::duration_cast<std::chrono::milliseconds>(duration).count());
         if (receiveCommand()) {
-            start = std::clock();
+            // dprintf(1, "received command\n");
+            start = std::chrono::system_clock::now();
         }
-        if (std::clock() - ingredientClock > static_cast<long int>(m_refillCD * 1000)) {
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(durationIngredient).count()
+            > static_cast<long int>(m_refillCD)) {
             ingredientsRefill();
             m_condIng.notify_all();
-            ingredientClock = std::clock();
+            ingredientClock = std::chrono::system_clock::now();
         }
+        duration = std::chrono::system_clock::now() - start;
+        durationIngredient = std::chrono::system_clock::now() - ingredientClock;
     }
-    std::cout << "removing kitchen" << std::endl;
+    dprintf(1, "removing kitchen\n");
     std::array<int, QUEUE_DATA_SIZE>arr = {0};
     m_deathqueue.sendMessage(Plazza::QUEUE_MESSAGES::DEAD, arr);
+    dprintf(1, "I sent death\n");
     m_process.stopProcess();
 }
