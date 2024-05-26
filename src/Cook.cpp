@@ -44,7 +44,7 @@ void Plazza::Cook::cookPizza(Pizza &pizza)
 
 void Plazza::Cook::takeCommand()
 {
-    dprintf(1, "enter cook\n");
+    // dprintf(1, "enter cook\n");
     Plazza::Pizza pizza = menu[0];
     while (1) {
         if (m_commands.tryPop(pizza) != 0) {

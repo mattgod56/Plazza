@@ -62,6 +62,6 @@ Plazza::MessageQueue::Datapack Plazza::MessageQueue::receiveMessage(void)
             throw Plazza::MessageQueueError();
         }
     }
-    dprintf(1, "return from message\n");
+    // dprintf(1, "return from message\n");
     return res;
 }

@@ -46,8 +46,9 @@ bool Plazza::Kitchen::receiveCommand(void)
         // std::cout << "tryying to get data" << std::endl;
         // dprintf(1, "trying to read\n");
         m_queue >> res;
-        dprintf(1, "command read\n");
+        // dprintf(1, "command read\n");
         if (res.replycode == Plazza::QUEUE_MESSAGES::INFO) {
+            std::cout << "sending back response" << std::endl;
             Plazza::MessageQueue::Datapack send;
             send.replycode = Plazza::QUEUE_MESSAGES::INFO_RES;
             send.data[0] = m_commands.length();
@@ -63,8 +64,6 @@ bool Plazza::Kitchen::receiveCommand(void)
         }
         return false;
     } catch (Plazza::MessageQueueError &e) {
-        // std::cerr << e.what() << std::endl;
-
         return false;
     }
 }
@@ -97,5 +96,4 @@ void Plazza::Kitchen::dailyKitchenLife(void)
         arr[i] = 0;
     m_deathqueue.sendMessage(Plazza::QUEUE_MESSAGES::DEAD, arr);
     m_process.stopProcess();
-    dprintf(1, "I sent death\n");
 }

@@ -10,6 +10,7 @@
 #include "queue.hpp"
 
 #include <array>
+#include <chrono>
 #include <exception>
 #include <iostream>
 #include <sstream>
@@ -72,28 +73,28 @@ void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
     int min = 0;
     int idx = 0;
 
-    std::cout << m_kitchens.size() << std::endl;
     for (std::size_t i = 0; i < m_kitchens.size(); i++) {
-        Plazza::MessageQueue &queue = m_kitchens.at(i)->getQueue();
-        std::array<int, QUEUE_DATA_SIZE> arr;
-        for (int i = 0; i < QUEUE_DATA_SIZE; i++)
-            arr[i] = 0;
+        std::cout << i << std::endl;
         Plazza::MessageQueue::Datapack data;
+        for (int i = 0; i < QUEUE_DATA_SIZE; i++)
+            data.data[i] = 0;
+        data.replycode = Plazza::QUEUE_MESSAGES::INFO;
         try {
             std::cout << "sending info" << std::endl;
-            queue.sendMessage(Plazza::QUEUE_MESSAGES::INFO, arr);
+            m_kitchens.at(i)->getQueue() << data;
         }catch (std::exception &e) {
-
+            std::cerr << e.what() << std::endl;
         }
-        data.replycode = 0;
-        while (data.replycode != Plazza::QUEUE_MESSAGES::INFO_RES) {
+        Plazza::MessageQueue::Datapack resdata;
+        resdata.replycode = 0;
+        while (static_cast<Plazza::QUEUE_MESSAGES>(resdata.replycode) != Plazza::QUEUE_MESSAGES::INFO_RES) {
             try {
-                queue >> data;
+                m_kitchens.at(i)->getQueue() >> resdata;
             } catch (std::exception &) {
 
             }
         }
-        vec.push_back(data.data[0]);
+        vec.push_back(resdata.data[0]);
     }
     if (m_kitchens.size() > 0) {
         min = vec[0];
@@ -114,7 +115,8 @@ void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
             break;
         pizidx++;
     }
-    data.data[0] = pizidx;
+    for (int i = 0; i < QUEUE_DATA_SIZE; i++)
+        data.data[i] = pizidx;
     dprintf(1, "SEND PIZZA %d\n", idx);
     m_kitchens.at(idx)->getQueue() << data;
 }
@@ -154,5 +156,6 @@ void Plazza::Reception::deleteKitchen(void)
                 break;
             }
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
     }
 }

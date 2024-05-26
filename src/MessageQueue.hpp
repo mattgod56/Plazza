@@ -39,7 +39,6 @@ namespace Plazza
             {
                 data = receiveMessage();
             }
-        private:
             std::string m_name;
             int m_msgsize;
             mqd_t m_queue;
