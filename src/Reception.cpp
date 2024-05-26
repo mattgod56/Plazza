@@ -6,15 +6,23 @@
 */
 
 #include "Reception.hpp"
+#include "MessageQueue.hpp"
+#include "queue.hpp"
 
 #include <array>
+#include <chrono>
+#include <exception>
 #include <iostream>
 #include <sstream>
+#include <thread>
+#include <vector>
 
 void Plazza::Reception::getCommands()
 {
     std::string line;
     std::string command;
+    std::vector<std::thread>vec;
+    std::thread thrd(&Reception::deleteKitchen, this);
 
     while (std::getline(std::cin, line)) {
         std::istringstream iss(line);
@@ -38,6 +46,7 @@ void Plazza::Reception::pizzaFound(std::istringstream &iss, Pizza &pizza)
     int amount = std::stoi(strAmount, &idx);
     if (idx != strAmount.size() || !(amount > 0))
         return;
+    std::cout << amount << std::endl;
     for (int i = 0; i < amount; i++) {
         communicateToKitchen(pizza);
         std::cout << "One " << size << " " << typeToString.at(pizza.m_type) << " please !" << std::endl;
@@ -65,12 +74,26 @@ void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
     int idx = 0;
 
     for (std::size_t i = 0; i < m_kitchens.size(); i++) {
-        Plazza::MessageQueue &queue = m_kitchens.at(i)->getQueue();
-        std::array<int, QUEUE_DATA_SIZE> arr = {0};
-        queue.sendMessage(Plazza::QUEUE_MESSAGES::INFO, arr);
         Plazza::MessageQueue::Datapack data;
-        queue >> data;
-        vec.push_back(data.data[0]);
+        for (int i = 0; i < QUEUE_DATA_SIZE; i++)
+            data.data[i] = 0;
+        data.replycode = Plazza::QUEUE_MESSAGES::INFO;
+        try {
+            m_kitchens.at(i)->getQueue() << data;
+        }catch (std::exception &e) {
+            std::cerr << e.what() << std::endl;
+        }
+        Plazza::MessageQueue::Datapack resdata;
+        resdata.replycode = 0;
+        std::this_thread::sleep_for(std::chrono::milliseconds(700));
+        while (static_cast<Plazza::QUEUE_MESSAGES>(resdata.replycode) != Plazza::QUEUE_MESSAGES::INFO_RES) {
+            try {
+                m_kitchens.at(i)->getQueue() >> resdata;
+            } catch (std::exception &) {
+
+            }
+        }
+        vec.push_back(resdata.data[0]);
     }
     if (m_kitchens.size() > 0) {
         min = vec[0];
@@ -85,7 +108,14 @@ void Plazza::Reception::communicateToKitchen(Plazza::Pizza &pizza)
         return createKitchen(pizza);
     Plazza::MessageQueue::Datapack data;
     data.replycode = Plazza::QUEUE_MESSAGES::PIZZA;
-    data.data[0] = idx;
+    int pizidx = 0;
+    for (int i = 1; i < 8; i *=2) {
+        if (static_cast<Plazza::PizzaType>(i) == pizza.m_type)
+            break;
+        pizidx++;
+    }
+    for (int i = 0; i < QUEUE_DATA_SIZE; i++)
+        data.data[i] = pizidx;
     m_kitchens.at(idx)->getQueue() << data;
 }
 
@@ -103,6 +133,27 @@ void Plazza::Reception::createKitchen(Plazza::Pizza &pizza)
     }
     Plazza::MessageQueue::Datapack data;
     data.replycode = Plazza::QUEUE_MESSAGES::PIZZA;
-    data.data[0] = idx;
+    for (int i = 0; i < QUEUE_DATA_SIZE; i++)
+        data.data[i] = idx;
     m_kitchens.back()->getQueue() << data;
+}
+
+void Plazza::Reception::deleteKitchen(void)
+{
+    while (true) {
+        for (auto i = m_kitchens.begin(); i != m_kitchens.end(); i++) {
+            Plazza::MessageQueue::Datapack data;
+            try {
+                i->get()->getDeathQueue() >> data;
+            } catch (std::exception &e) {
+
+            }
+            if (data.replycode == Plazza::QUEUE_MESSAGES::DEAD) {
+                std::cout << "deleting kitchen" << std::endl;
+                m_kitchens.erase(i);
+                break;
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    }
 }

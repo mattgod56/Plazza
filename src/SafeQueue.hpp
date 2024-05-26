@@ -12,7 +12,7 @@
 
 class SafeQueue {
     public:
-        SafeQueue() {}
+        SafeQueue() : m_vect() {}
         ~SafeQueue() = default;
         void push(Plazza::Pizza pizza)
         {
@@ -28,6 +28,12 @@ class SafeQueue {
             pizza = m_vect.at(0);
             m_vect.erase(m_vect.begin());
             return true;
+        }
+
+        int length()
+        {
+            std::unique_lock<std::mutex> lk(m_mut);
+            return m_vect.size();
         }
 
     private:

@@ -14,8 +14,8 @@
 
 namespace Plazza {
     enum QUEUE_MESSAGES {
-        INFO,
         INFO_RES,
+        INFO,
         PIZZA,
         STATUS,
         STATUS_RES,
