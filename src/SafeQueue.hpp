@@ -12,7 +12,7 @@
 
 class SafeQueue {
     public:
-        SafeQueue() {}
+        SafeQueue() : m_vect() {}
         ~SafeQueue() = default;
         void push(Plazza::Pizza pizza)
         {

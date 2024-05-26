@@ -8,6 +8,7 @@
 #include "Kitchen.hpp"
 #include "Exception.hpp"
 #include "define.hpp"
+#include "queue.hpp"
 
 #include <array>
 #include <iostream>
@@ -17,7 +18,7 @@ Plazza::Kitchen::Kitchen(
     double cookingMult,
     std::size_t refillCD,
     std::string name) : m_nbrCook(nbrCook), m_cookingTimeMult(cookingMult), m_refillCD(refillCD),
-        m_queue(name, QUEUE_SIZE, QUEUE_MSG_SIZE), m_deathqueue(name + "_death", QUEUE_SIZE, QUEUE_MSG_SIZE)
+        m_queue(name, QUEUE_SIZE, QUEUE_MSG_SIZE), m_deathqueue(name + "death", QUEUE_SIZE, QUEUE_MSG_SIZE)
 {
     for (int i = PizzaIngredients::Dough; i != PizzaIngredients::NONE; i++)
         m_ingredients[static_cast<PizzaIngredients>(i)] = 5;
@@ -32,7 +33,7 @@ Plazza::Kitchen::Kitchen(
 
 void Plazza::Kitchen::ingredientsRefill(void)
 {
-    dprintf(1, "tactical refill\n");
+    // dprintf(1, "tactical refill\n");
     for (int i = PizzaIngredients::Dough; i != PizzaIngredients::NONE; i++) {
         m_ingredients[static_cast<PizzaIngredients>(i)] += 1;
     }
@@ -92,8 +93,9 @@ void Plazza::Kitchen::dailyKitchenLife(void)
     }
     dprintf(1, "removing kitchen\n");
     std::array<int, QUEUE_DATA_SIZE>arr;
-    arr[0] = 0;
+    for (int i = 0; i < QUEUE_DATA_SIZE; i++)
+        arr[i] = 0;
     m_deathqueue.sendMessage(Plazza::QUEUE_MESSAGES::DEAD, arr);
-    dprintf(1, "I sent death\n");
     m_process.stopProcess();
+    dprintf(1, "I sent death\n");
 }
