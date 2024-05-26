@@ -25,10 +25,10 @@ bool Plazza::Cook::areIngredientsMet(Pizza &pizza)
 void Plazza::Cook::cookPizza(Pizza &pizza)
 {
     bool cooked = false;
-    std::unique_lock<std::mutex> lk(m_mutex);
 
     while (!cooked) {
         if (!areIngredientsMet(pizza)) {
+            std::unique_lock<std::mutex> lk(m_mutex);
             m_condIng.wait(lk);
             continue;
         }
@@ -37,7 +37,7 @@ void Plazza::Cook::cookPizza(Pizza &pizza)
             < pizza.m_cookingTime * m_mult * 1000);
         cooked = true;
     }
-    std::cout << "i cooked the " <<  typeToString.at(pizza.m_type)  << std::endl;
+    std::cout << "I cooked the " <<  typeToString.at(pizza.m_type)  << std::endl;
     m_occupiedCook -= 1;
 }
 

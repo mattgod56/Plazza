@@ -27,10 +27,10 @@ Plazza::MessageQueue::MessageQueue(std::string name, int max, int msgmax) : m_na
 
 Plazza::MessageQueue::~MessageQueue()
 {
-    if (m_queue != (mqd_t)-1)
+    if (m_queue != (mqd_t)-1) {
         mq_close(m_queue);
-    if (m_queue != (mqd_t)-1)
         mq_unlink(m_name.c_str());
+    }
 }
 
 void Plazza::MessageQueue::sendMessage(int code, std::array<int, QUEUE_DATA_SIZE> &data)
