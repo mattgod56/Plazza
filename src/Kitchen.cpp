@@ -11,7 +11,6 @@
 #include "queue.hpp"
 
 #include <array>
-#include <iostream>
 
 Plazza::Kitchen::Kitchen(
     std::size_t nbrCook,
@@ -33,7 +32,6 @@ Plazza::Kitchen::Kitchen(
 
 void Plazza::Kitchen::ingredientsRefill(void)
 {
-    // dprintf(1, "tactical refill\n");
     for (int i = PizzaIngredients::Dough; i != PizzaIngredients::NONE; i++) {
         m_ingredients[static_cast<PizzaIngredients>(i)] += 1;
     }
@@ -43,21 +41,16 @@ bool Plazza::Kitchen::receiveCommand(void)
 {
     try {
         Plazza::MessageQueue::Datapack res;
-        // std::cout << "tryying to get data" << std::endl;
-        // dprintf(1, "trying to read\n");
         m_queue >> res;
-        // dprintf(1, "command read\n");
         if (res.replycode == Plazza::QUEUE_MESSAGES::INFO) {
-            std::cout << "sending back response" << std::endl;
             Plazza::MessageQueue::Datapack send;
             send.replycode = Plazza::QUEUE_MESSAGES::INFO_RES;
-            send.data[0] = m_commands.length();
+            send.data[0] = m_commands.length() + m_occupiedCooks;
             m_queue << send;
             return false;
         }
 
         if (res.replycode == Plazza::QUEUE_MESSAGES::PIZZA) {
-            dprintf(1, "command info recognized\n");
             Plazza::Pizza pizza = menu[res.data[0]];
             m_commands.push(pizza);
             return true;
@@ -75,9 +68,7 @@ void Plazza::Kitchen::dailyKitchenLife(void)
     auto duration = std::chrono::system_clock::now() - start;
     auto durationIngredient = std::chrono::system_clock::now() - ingredientClock;
     while (std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() <= TIME_TO_CLOSE) {
-        // dprintf(1, "Time: %ld\n", std::chrono::duration_cast<std::chrono::milliseconds>(duration).count());
         if (receiveCommand() || m_occupiedCooks > 0 || m_commands.length() > 0) {
-            // dprintf(1, "received command\n");
             start = std::chrono::system_clock::now();
         }
         if (std::chrono::duration_cast<std::chrono::milliseconds>(durationIngredient).count()
@@ -88,7 +79,6 @@ void Plazza::Kitchen::dailyKitchenLife(void)
         }
         duration = std::chrono::system_clock::now() - start;
         durationIngredient = std::chrono::system_clock::now() - ingredientClock;
-        // dprintf(1, "TIME %ld %d %d\n",duration.count(), m_commands.length(), m_occupiedCooks);
     }
     dprintf(1, "removing kitchen\n");
     std::array<int, QUEUE_DATA_SIZE>arr;

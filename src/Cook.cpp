@@ -26,7 +26,6 @@ void Plazza::Cook::cookPizza(Pizza &pizza)
 {
     bool cooked = false;
     std::unique_lock<std::mutex> lk(m_mutex);
-    std::cout << "entering" << std::endl;
 
     while (!cooked) {
         if (!areIngredientsMet(pizza)) {
@@ -44,7 +43,6 @@ void Plazza::Cook::cookPizza(Pizza &pizza)
 
 void Plazza::Cook::takeCommand()
 {
-    // dprintf(1, "enter cook\n");
     Plazza::Pizza pizza = menu[0];
     while (1) {
         if (m_commands.tryPop(pizza) != 0) {
