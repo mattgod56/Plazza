@@ -48,7 +48,7 @@ bool Plazza::Kitchen::receiveCommand(void)
         if (res.replycode == Plazza::QUEUE_MESSAGES::INFO) {
             Plazza::MessageQueue::Datapack send;
             send.replycode = Plazza::QUEUE_MESSAGES::INFO_RES;
-            send.data[0] = 1;
+            send.data[0] = m_commands.length();
             m_queue << send;
             return false;
         }
@@ -89,7 +89,8 @@ void Plazza::Kitchen::dailyKitchenLife(void)
         durationIngredient = std::chrono::system_clock::now() - ingredientClock;
     }
     dprintf(1, "removing kitchen\n");
-    std::array<int, QUEUE_DATA_SIZE>arr = {0};
+    std::array<int, QUEUE_DATA_SIZE>arr;
+    arr[0] = 0;
     m_deathqueue.sendMessage(Plazza::QUEUE_MESSAGES::DEAD, arr);
     dprintf(1, "I sent death\n");
     m_process.stopProcess();

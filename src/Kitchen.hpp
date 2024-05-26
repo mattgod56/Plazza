@@ -24,6 +24,7 @@ namespace Plazza {
             void ingredientsRefill(void);
             void dailyKitchenLife();
             Plazza::MessageQueue &getQueue(void){return m_queue;}
+            Plazza::MessageQueue &getDeathQueue(void){return m_queue;}
         private:
             void checkAlive(void);
             bool receiveCommand(void);

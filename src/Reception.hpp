@@ -8,6 +8,7 @@
 #pragma once
 
 #include <memory>
+#include <thread>
 #include <vector>
 
 #include "Kitchen.hpp"
@@ -26,6 +27,7 @@ namespace Plazza {
             void checkCommand(std::string str);
             void pizzaFound(std::istringstream &iss, Pizza &pizza);
             void communicateToKitchen(Plazza::Pizza &);
+            void deleteKitchen(void);
         private:
             void createKitchen(Plazza::Pizza &pizza);
             double m_cookingTimeMult;

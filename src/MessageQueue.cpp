@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <mqueue.h>
 
 Plazza::MessageQueue::MessageQueue(std::string name, int max, int msgmax) : m_name(name), m_msgsize(msgmax)
 {
@@ -40,9 +41,11 @@ void Plazza::MessageQueue::sendMessage(int code, std::array<int, QUEUE_DATA_SIZE
     buffer.replycode = code;
     for (int i = 0; i < QUEUE_DATA_SIZE; i++)
         buffer.data[i] = data[i];
-    if (mq_send(m_queue, (const char *)&buffer, sizeof(buffer), 0) == -1) {
-        std::cerr << "send: " << strerror(errno) << std::endl;
-        throw Plazza::MessageQueueError();
+    if (m_queue != (mqd_t)-1) {
+        if (mq_send(m_queue, (const char *)&buffer, sizeof(buffer), 0) == -1) {
+            std::cerr << "send: " << strerror(errno) << std::endl;
+            throw Plazza::MessageQueueError();
+        }
     }
 }
 
@@ -54,8 +57,8 @@ Plazza::MessageQueue::Datapack Plazza::MessageQueue::receiveMessage(void)
         // dprintf(1, "want data %d\n", m_msgsize);
         ssize_t bytes =  mq_receive(m_queue, (char *)&res, m_msgsize, NULL);
         // dprintf(1,"got data\n");
-        if (bytes == -1 || bytes == 0) {
-            // std::cerr << "receive: " << strerror(errno) << std::endl;
+        if (bytes == -1) {
+            std::cerr << "receive: " << strerror(errno) << std::endl;
             throw Plazza::MessageQueueError();
         }
     }
