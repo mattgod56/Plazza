@@ -8,10 +8,12 @@
 #include "Kitchen.hpp"
 #include "Exception.hpp"
 #include "MessageQueue.hpp"
+#include "Pizza.hpp"
 #include "define.hpp"
 #include "queue.hpp"
 
 #include <array>
+#include <iostream>
 
 Plazza::Kitchen::Kitchen(
     std::size_t nbrCook,
@@ -44,6 +46,17 @@ bool Plazza::Kitchen::receiveCommand(void)
     try {
         Plazza::MessageQueue::Datapack res;
         m_queue >> res;
+        if (res.replycode == Plazza::QUEUE_MESSAGES::STATUS) {
+            Plazza::MessageQueue::Datapack send;
+            send.replycode = Plazza::QUEUE_MESSAGES::STATUS_RES;
+            for (int i = 0; i < INGREDIENTS_NBR; i++) {
+                send.data[i] = m_ingredients[static_cast<Plazza::PizzaIngredients>(i)];
+            }
+            send.data[INGREDIENTS_NBR] = m_commands.length();
+            m_sndqueue << send;
+            return false;
+        }
+
         if (res.replycode == Plazza::QUEUE_MESSAGES::INFO) {
             Plazza::MessageQueue::Datapack send;
             send.replycode = Plazza::QUEUE_MESSAGES::INFO_RES;

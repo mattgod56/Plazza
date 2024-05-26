@@ -9,6 +9,8 @@
 #include <map>
 #include <string>
 
+#define INGREDIENTS_NBR 9
+
 namespace Plazza
 {
     enum PizzaType

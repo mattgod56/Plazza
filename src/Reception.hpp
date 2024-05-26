@@ -25,6 +25,7 @@ namespace Plazza {
             void getCommands();
             void checkCommand(std::string str);
             void pizzaFound(std::istringstream &iss, Pizza &pizza);
+            void statusCmd(void);
             void communicateToKitchen(Plazza::Pizza &);
             void deleteKitchen(void);
         private:

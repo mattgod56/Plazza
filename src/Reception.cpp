@@ -8,9 +8,12 @@
 #include "Reception.hpp"
 #include "Kitchen.hpp"
 #include "MessageQueue.hpp"
+#include "Pizza.hpp"
 #include "queue.hpp"
 
+#include <array>
 #include <chrono>
+#include <cstddef>
 #include <exception>
 #include <iostream>
 #include <sstream>
@@ -60,9 +63,39 @@ void Plazza::Reception::checkCommand(std::string command)
     std::string name;
     if (!getline(iss, name, ' '))
         return;
+    if (name == "status") {
+        return statusCmd();
+    }
     for (auto pizza: menu) {
         if (name == typeToString.at(pizza.m_type))
             return pizzaFound(iss, pizza);
+    }
+}
+
+void Plazza::Reception::statusCmd(void)
+{
+    std::array<std::string, INGREDIENTS_NBR + 1> arr = {"Dough", "Tomato", "Gruyere","Ham","Mushroom","Steak","Eggplant","GoatCheese","ChiefLove", "NbrOfCommands"};
+    try {
+        for (std::size_t i = 0; i < m_kitchens.size(); i++) {
+            Plazza::MessageQueue::Datapack data;
+            data.replycode = Plazza::QUEUE_MESSAGES::STATUS;
+            m_kitchens.at(i)->getQueue() << data;
+            std::cout << "waiting for answer" << std::endl;
+            while (static_cast<Plazza::QUEUE_MESSAGES>(data.replycode) != Plazza::QUEUE_MESSAGES::STATUS_RES) {
+                try {
+                    m_kitchens.at(i)->getSndQueue() >> data;
+                } catch (std::exception &) {
+
+                }
+            }
+            std::cout << std::endl << "Kitchen[" << i << "]:" << std::endl;
+            for (int i = 0; i <= INGREDIENTS_NBR; i++) {
+                std::cout << arr[i] << ": " << data.data[i] << std::endl;
+            }
+            std::cout << std::endl;
+        }
+    } catch (std::exception &e) {
+        return;
     }
 }
 
