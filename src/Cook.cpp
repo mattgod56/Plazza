@@ -34,7 +34,7 @@ void Plazza::Cook::cookPizza(Pizza &pizza)
         }
         auto start = std::chrono::system_clock::now();
         while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start).count()
-            < pizza.m_cookingTime * m_mult * 1000);
+            < pizza.m_cookingTime / m_mult * 1000);
         cooked = true;
     }
     std::cout << "I cooked the " <<  typeToString.at(pizza.m_type)  << std::endl;

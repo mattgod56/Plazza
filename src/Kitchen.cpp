@@ -13,7 +13,6 @@
 #include "queue.hpp"
 
 #include <array>
-#include <iostream>
 
 Plazza::Kitchen::Kitchen(
     std::size_t nbrCook,
@@ -95,7 +94,6 @@ void Plazza::Kitchen::dailyKitchenLife(void)
         duration = std::chrono::system_clock::now() - start;
         durationIngredient = std::chrono::system_clock::now() - ingredientClock;
     }
-    std::cout << "removing kitchen" << std::endl;
     std::array<int, QUEUE_DATA_SIZE>arr;
     for (int i = 0; i < QUEUE_DATA_SIZE; i++)
         arr[i] = 0;
